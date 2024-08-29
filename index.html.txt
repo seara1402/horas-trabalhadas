@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Salário Proporcional</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+        }
+        label, input {
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Salário Proporcional</h1>
+        <label for="salario">Salário Mensal (R$):</label>
+        <input type="number" id="salario" placeholder="Ex: 800" required>
+
+        <label for="inicio">Data de Início (dd/mm/yyyy):</label>
+        <input type="date" id="inicio" required>
+
+        <label for="fim">Data Final para Cálculo (dd/mm/yyyy):</label>
+        <input type="date" id="fim" required>
+
+        <button onclick="calcularSalario()">Calcular</button>
+
+        <div id="resultado" class="result"></div>
+    </div>
+
+    <script>
+        function calcularDiasUteis(dataInicio, dataFim) {
+            let diasUteis = 0;
+            let diaAtual = new Date(dataInicio);
+
+            while (diaAtual <= dataFim) {
+                const diaSemana = diaAtual.getDay();
+                if (diaSemana !== 0 && diaSemana !== 6) { // 0 = Domingo, 6 = Sábado
+                    diasUteis++;
+                }
+                diaAtual.setDate(diaAtual.getDate() + 1);
+            }
+
+            return diasUteis;
+        }
+
+        function calcularSalario() {
+            const salarioMensal = parseFloat(document.getElementById('salario').value);
+            const dataInicio = new Date(document.getElementById('inicio').value);
+            const dataFim = new Date(document.getElementById('fim').value);
+
+            if (isNaN(salarioMensal) || !dataInicio || !dataFim) {
+                alert("Por favor, preencha todos os campos corretamente.");
+                return;
+            }
+
+            const diasUteisTrabalhados = calcularDiasUteis(dataInicio, dataFim);
+            const diasUteisMes = 22; // Considerando um mês padrão com 22 dias úteis
+            const valorDia = salarioMensal / diasUteisMes;
+            const salarioProporcional = (valorDia * diasUteisTrabalhados).toFixed(2);
+
+            document.getElementById('resultado').innerHTML = 
+                `<strong>Resultado:</strong><br>
+                Dias Úteis Trabalhados: ${diasUteisTrabalhados}<br>
+                Salário a Receber: R$ ${salarioProporcional}`;
+        }
+    </script>
+</body>
+</html>
